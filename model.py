@@ -15,6 +15,12 @@ class Sex(str, Enum):
     NOT_KNOWN = 'not known'
 
 
+class DocumentStatus(str, Enum):
+    UNREVIEWED = 'unreviewed'
+    ACCEPTED = 'accepted'
+    REJECTED = 'rejected'
+
+
 class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     email: pydantic.EmailStr
@@ -35,9 +41,6 @@ class Company(SQLModel, table=True):
     owner_id: Optional[int] = Field(None, foreign_key="businessuser.id")
 
 
-
-
-
 class CasualUser(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)    
     balance: Decimal = Field(default=Decimal(0))
@@ -53,6 +56,20 @@ class BusinessUser(SQLModel, table=True):
     #FK
     account_id: Optional[int] = Field(default=None, foreign_key="user.id")
     account: User = Relationship()
+
+
+class DocumentType(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)  
+    name: str
+
+
+class CompanyDocument(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True) 
+
+    content: str
+    status: DocumentStatus = Field(DocumentStatus.UNREVIEWED)
+    company_id: int = Field(foreign_key='company.id')
+    company: Company = Relationship()
 
 
 
