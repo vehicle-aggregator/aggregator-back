@@ -1,0 +1,59 @@
+"""
+Модуль для создания данных-заглушки
+"""
+
+import random
+from uuid import uuid4
+import os
+from datetime import date, datetime
+
+from sqlmodel import create_engine, Session
+
+from mimesis import Person, Datetime, Internet
+from mimesis.locales import Locale
+from mimesis.enums import Gender
+
+fake_person = Person(locale=Locale.RU)
+fake_dt = Datetime()
+fake_internet = Internet()
+
+N_USERS = 100
+N_CASUALS = 30
+
+SQLITE_DB = "database.db"
+
+try:
+    os.remove(SQLITE_DB)
+except FileNotFoundError:
+    pass
+
+from model import CasualUser, Sex, User
+engine = create_engine(f'sqlite:///{SQLITE_DB}')
+
+
+
+with Session(engine) as session:
+    for _ in range(N_USERS):
+        session.add(
+            User(
+                email=fake_person.email(unique=True),
+                sex=random.choice(list(Sex)),
+                createdAt=fake_dt.datetime(start=2020),
+                hashed_password=uuid4().hex,
+                birthday=fake_dt.date(start=1917)
+            )
+        )
+    session.commit()
+
+    for _ in range(N_CASUALS):
+        session.add(
+            CasualUser(
+                balance=f'{random.randint(0, 10000)}{random.randint(0, 99)}',
+                account_id=random.randint(1, N_USERS)
+            )
+        )
+
+    session.commit()
+
+
+
