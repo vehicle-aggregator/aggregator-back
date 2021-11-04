@@ -9,16 +9,19 @@ from datetime import date, datetime
 
 from sqlmodel import create_engine, Session
 
-from mimesis import Person, Datetime, Internet
+from mimesis import Person, Datetime, Internet, Food
 from mimesis.locales import Locale
 from mimesis.enums import Gender
 
 fake_person = Person(locale=Locale.RU)
 fake_dt = Datetime()
 fake_internet = Internet()
+fake_food = Food()
 
 N_USERS = 100
-N_CASUALS = 30
+N_CASUAL_USERS = 30
+N_BUSINESS_USERS = 30
+N_COMPANIES = 30
 
 SQLITE_DB = "database.db"
 
@@ -27,7 +30,7 @@ try:
 except FileNotFoundError:
     pass
 
-from model import CasualUser, Sex, User
+from model import BusinessUser, CasualUser, Company, Sex, User
 engine = create_engine(f'sqlite:///{SQLITE_DB}')
 
 
@@ -45,7 +48,7 @@ with Session(engine) as session:
         )
     session.commit()
 
-    for _ in range(N_CASUALS):
+    for _ in range(N_CASUAL_USERS):
         session.add(
             CasualUser(
                 balance=f'{random.randint(0, 10000)}{random.randint(0, 99)}',
@@ -53,6 +56,21 @@ with Session(engine) as session:
             )
         )
 
+    session.commit()
+
+    for _ in range(N_BUSINESS_USERS):
+        session.add(
+            BusinessUser(account_id=random.randint(1, N_USERS))
+        )
+    session.commit()
+
+    for _ in range(N_COMPANIES):
+        session.add(
+            Company(
+                name=f'ООО "{fake_food.fruit()}"',
+                owner_id=random.randint(1, N_BUSINESS_USERS)
+            )
+        )    
     session.commit()
 
 

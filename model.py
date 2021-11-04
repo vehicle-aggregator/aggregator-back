@@ -24,6 +24,20 @@ class User(SQLModel, table=True):
     createdAt: datetime
 
 
+class Company(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)  
+
+    name: str
+
+    moderated: bool = Field(False) 
+    blocked: bool = Field(False)
+    # TODO FK NOT NULL MUST BE
+    owner_id: Optional[int] = Field(None, foreign_key="businessuser.id")
+
+
+
+
+
 class CasualUser(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)    
     balance: Decimal = Field(default=Decimal(0))
@@ -32,6 +46,13 @@ class CasualUser(SQLModel, table=True):
     account_id: Optional[int] = Field(default=None, foreign_key="user.id")
     account: User = Relationship()
 
+
+class BusinessUser(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)    
+
+    #FK
+    account_id: Optional[int] = Field(default=None, foreign_key="user.id")
+    account: User = Relationship()
 
 
 
