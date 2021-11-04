@@ -3,6 +3,7 @@ import pydantic
 from decimal import Decimal
 
 from enum import Enum
+from sqlalchemy.orm import backref
 from sqlmodel import Field, Session, SQLModel, create_engine, select, Relationship
 
 from pydantic import conint
@@ -11,7 +12,7 @@ from datetime import date, datetime
 class Sex(str, Enum):
     MALE = 'male'
     FEMALE = 'female'
-    UNDEFINED = 'undefined'
+    NOT_KNOWN = 'not known'
 
 
 class User(SQLModel, table=True):
@@ -19,7 +20,7 @@ class User(SQLModel, table=True):
     email: pydantic.EmailStr
     hashed_password: str
     birthday: date
-    sex: Sex = Field(Sex.UNDEFINED)
+    sex: Sex = Field(Sex.NOT_KNOWN)
     createdAt: datetime
 
 
@@ -29,7 +30,7 @@ class CasualUser(SQLModel, table=True):
 
     #FK
     account_id: Optional[int] = Field(default=None, foreign_key="user.id")
-    account: User = Relationship(back_populates='casual_users')
+    account: User = Relationship()
 
 
 
