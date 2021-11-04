@@ -23,6 +23,7 @@ N_CASUAL_USERS = 30
 N_BUSINESS_USERS = 30
 N_COMPANIES = 30
 N_COMPANY_DOCUMENTS = 60
+N_VEHICLES = 20
 
 
 SQLITE_DB = "database.db"
@@ -32,7 +33,7 @@ try:
 except FileNotFoundError:
     pass
 
-from model import BusinessUser, CasualUser, Company, CompanyDocument, DocumentStatus, DocumentType, Sex, User
+from model import BusinessUser, CasualUser, Company, CompanyDocument, DocumentStatus, DocumentType, Sex, User, Vehicle, VehicleCategory
 engine = create_engine(f'sqlite:///{SQLITE_DB}')
 
 
@@ -89,6 +90,24 @@ with Session(engine) as session:
                 company_id=random.randint(1, N_COMPANIES)
             ) 
             
+        )
+    session.commit()
+
+
+    session.add(VehicleCategory(name="микроавтобус"))
+    session.add(VehicleCategory(name="автобус"))
+    session.add(VehicleCategory(name="туристический автобус"))
+    session.add(VehicleCategory(name="патибас"))
+    session.commit()
+
+    for _ in range(N_VEHICLES):
+        session.add(
+            Vehicle(
+                vehicle_gos_nomer=f"{random.choice(['аа', 'ао', 'оо'])}{random.randint(100, 999)}{random.choice('абмву')}{random.randint(1, 99)}",
+                passenger_count=random.randint(8, 45),
+                category_id=random.randint(1, 4),
+                company_id=random.randint(1, N_COMPANIES)
+            )
         )
     session.commit()
 

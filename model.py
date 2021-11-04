@@ -72,6 +72,25 @@ class CompanyDocument(SQLModel, table=True):
     company: Company = Relationship()
 
 
+class VehicleCategory(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+
+    name: str
+
+
+class Vehicle(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True) 
+
+    vehicle_gos_nomer: str
+    passenger_count: int
+
+    category_id: int = Field(foreign_key="vehiclecategory.id")
+    category: VehicleCategory = Relationship()
+
+    company_id: int = Field(foreign_key="company.id")
+    company: Company = Relationship()
+
+
 
 engine = create_engine("sqlite:///database.db")
 
