@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 import pydantic
 from decimal import Decimal
 
@@ -6,7 +6,7 @@ from enum import Enum
 from sqlalchemy.orm import backref
 from sqlmodel import Field, Session, SQLModel, create_engine, select, Relationship
 
-from pydantic import conint
+from pydantic import conint, conlist
 from datetime import date, datetime
 
 class Sex(str, Enum):
@@ -89,6 +89,27 @@ class Vehicle(SQLModel, table=True):
 
     company_id: int = Field(foreign_key="company.id")
     company: Company = Relationship()
+
+
+class Place(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True) 
+
+    name: str
+    description: str
+    country: str
+    longitude: float
+    latitude: float
+
+
+class Route(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True) 
+
+    from_place_id: int = Field(foreign_key="place.id")
+    to_place_id: int = Field(foreign_key="place.id")
+
+    to_place: Place = Relationship(sa_relationship_kwargs={'foreign_keys': "[Route.to_place_id]"})
+    from_place: Place = Relationship(sa_relationship_kwargs={'foreign_keys': "[Route.from_place_id]"})
+
 
 
 
