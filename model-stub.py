@@ -14,7 +14,7 @@ from mimesis.locales import Locale
 from mimesis.enums import Gender
 
 from model import (BusinessUser, CasualUser, Company, CompanyDocument, DocumentStatus,
-                     DocumentType, Place, Route, Sex, User, Vehicle, VehicleCategory)
+                     DocumentType, Place, Route, Sex, Trip, TripStatus, User, Vehicle, VehicleCategory)
 
 
 fake_person = Person(locale=Locale.RU)
@@ -31,6 +31,7 @@ N_COMPANY_DOCUMENTS = 60
 N_VEHICLES = 20
 N_PLACES = 20
 N_ROUTES = 20
+N_TRIPS = 20
 
 SQLITE_DB = "database.db"
 
@@ -137,3 +138,16 @@ with Session(engine) as session:
         )
     session.commit()
 
+
+    for _ in range(N_TRIPS):
+        session.add(
+            Trip(
+                description=f"{fake_address.continent()} {fake_address.country()} {fake_address.federal_subject()}",
+                start_at=fake_dt.datetime(start=2020),
+                end_at=fake_dt.datetime(start=2020),
+                status=random.choice(list(TripStatus)),
+                route_id=random.randint(1, N_ROUTES),
+                vehicle_id=random.randint(1, N_VEHICLES)
+            )
+        )
+    session.commit()

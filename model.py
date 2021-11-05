@@ -111,6 +111,25 @@ class Route(SQLModel, table=True):
     from_place: Place = Relationship(sa_relationship_kwargs={'foreign_keys': "[Route.from_place_id]"})
 
 
+class TripStatus(str, Enum):
+    DONE = 'done'
+    CANCELED = 'cancel'
+    ANTICIPATED = 'anticipated'
+
+class Trip(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+
+    description: str
+    start_at: datetime 
+    end_at: datetime 
+    status: TripStatus = Field(TripStatus.ANTICIPATED)
+
+    route_id: int = Field(foreign_key="route.id")
+    route: Route = Relationship()
+
+    vehicle_id: int = Field(foreign_key="vehicle.id")
+    vehicle: Vehicle = Relationship()
+
 
 
 engine = create_engine("sqlite:///database.db")
