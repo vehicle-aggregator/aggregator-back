@@ -155,6 +155,20 @@ class TicketCategory(SQLModel, table=True):
     ratio: float
 
 
+class Ticket(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+
+    price: Decimal 
+    created_at: datetime
+
+    trip_id: int = Field(foreign_key='trip.id')
+    category_id: int = Field(foreign_key='ticketcategory.id')
+    passenger_id: int = Field(foreign_key='passenger.id')
+
+    trip: Trip = Relationship()
+    category: TicketCategory = Relationship()
+    passenger: Passenger = Relationship()
+    
 
 
 engine = create_engine("sqlite:///database.db")
