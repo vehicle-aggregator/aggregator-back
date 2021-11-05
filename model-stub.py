@@ -14,7 +14,7 @@ from mimesis.locales import Locale
 from mimesis.enums import Gender
 
 from model import (BusinessUser, CasualUser, Company, CompanyDocument, DocumentStatus,
-                     DocumentType, Place, Route, Sex, Trip, TripStatus, User, Vehicle,
+                     DocumentType, Place, Route, Sex, TicketCategory, Trip, TripStatus, User, Vehicle,
                      VehicleCategory, Passenger)
 
 
@@ -166,3 +166,11 @@ with Session(engine) as session:
             )
         )
     session.commit()
+
+    session.add(TicketCategory(name="зайцем", ratio=0.0))
+    session.add(TicketCategory(name="льготный", ratio=0.8))
+    session.add(TicketCategory(name="стандартный", ratio=1))
+    session.add(TicketCategory(name="VIP", ratio=1.2))
+    session.commit()
+
+    
