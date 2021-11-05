@@ -116,6 +116,7 @@ class TripStatus(str, Enum):
     CANCELED = 'cancel'
     ANTICIPATED = 'anticipated'
 
+
 class Trip(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
 
@@ -169,6 +170,32 @@ class Ticket(SQLModel, table=True):
     category: TicketCategory = Relationship()
     passenger: Passenger = Relationship()
     
+
+class Moderator(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)    
+
+    #FK
+    account_id: Optional[int] = Field(default=None, foreign_key="user.id")
+    account: User = Relationship()
+
+
+class CompanyApprovementStatus(str, Enum):
+    UNREVIEWED = 'unreviewed'
+    ACCEPTED = 'accepted'
+    REJECTED = 'rejected'
+
+
+class CompanyApprovement(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)  
+
+    status: CompanyApprovementStatus = Field(CompanyApprovementStatus.UNREVIEWED)
+    status_changed: datetime 
+
+    company_id: int = Field(foreign_key="company.id")
+    approved_by_id: int = Field(foreign_key="moderator.id")
+
+    company: Company = Relationship()
+    approved_by: Moderator = Relationship()
 
 
 engine = create_engine("sqlite:///database.db")

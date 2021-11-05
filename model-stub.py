@@ -13,8 +13,8 @@ from mimesis import Person, Datetime, Internet, Food, Address
 from mimesis.locales import Locale
 from mimesis.enums import Gender
 
-from model import (BusinessUser, CasualUser, Company, CompanyDocument, DocumentStatus,
-                     DocumentType, Place, Route, Sex, Ticket, TicketCategory, Trip, TripStatus, User, Vehicle,
+from model import (BusinessUser, CasualUser, Company, CompanyApprovement, CompanyApprovementStatus, CompanyDocument, DocumentStatus,
+                     DocumentType, Moderator, Place, Route, Sex, Ticket, TicketCategory, Trip, TripStatus, User, Vehicle,
                      VehicleCategory, Passenger)
 
 
@@ -35,6 +35,7 @@ N_ROUTES = 20
 N_TRIPS = 20
 N_PASSENGERS = 40
 N_TICKETS = 50
+N_MODERATORS = 10
 
 SQLITE_DB = "database.db"
 
@@ -182,6 +183,23 @@ with Session(engine) as session:
                 category_id=random.randint(1, 4),
                 passenger_id=random.randint(1, N_PASSENGERS),
                 trip_id=random.randint(1, N_TRIPS)
+            )
+        )
+    session.commit()
+
+    for _ in range(N_MODERATORS):
+        session.add(
+            Moderator(account_id=random.randint(1, N_USERS))
+        )
+    session.commit()
+
+    for _ in range(N_PASSENGERS):
+        session.add(
+            CompanyApprovement(
+                approved_by_id=random.randint(1, N_MODERATORS),
+                company_id=random.randint(1, N_COMPANIES),
+                status=random.choice(list(CompanyApprovementStatus)),
+                status_changed=fake_dt.datetime(start=2020)
             )
         )
     session.commit()
