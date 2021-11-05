@@ -131,6 +131,22 @@ class Trip(SQLModel, table=True):
     vehicle: Vehicle = Relationship()
 
 
+class Passenger(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+
+    first_name: str
+    last_name: str
+    middle_name: str
+    birthday: date
+    document_detail: str
+
+
+    owner_id: int = Field(foreign_key="casualuser.id")
+    owner: CasualUser = Relationship()
+
+    document_type_id: int = Field(foreign_key="documenttype.id")
+    document_type: DocumentType = Relationship()
+
 
 engine = create_engine("sqlite:///database.db")
 
