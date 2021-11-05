@@ -61,7 +61,7 @@ with Session(engine) as session:
     for _ in range(N_CASUAL_USERS):
         session.add(
             CasualUser(
-                balance=f'{random.randint(0, 10000)}{random.randint(0, 99)}',
+                balance=f'{random.randint(0, 5000)}.{random.randint(0, 99)}',
                 account_id=random.randint(1, N_USERS)
             )
         )
