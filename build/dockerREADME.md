@@ -9,6 +9,6 @@ Run the image specifying volumes of Host and Container paths:
 
 All the files created within the container will be saved in your specified host directory
 
-/////////////////////////////////////////////////////////////////////////////////////////
+
 `Note:
 Anytime you change dockerfile, it is required to re-build your image`
