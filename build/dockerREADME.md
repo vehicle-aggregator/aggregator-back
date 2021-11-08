@@ -1,6 +1,6 @@
 # Building image and running docker container
 
-Put dockerfile inside your image directory along with required building files (`mode-stub.py, model.py, requirements.txt`)
+Put dockerfile inside your building directory along with required building files (`mode-stub.py, model.py, requirements.txt`)
 
 After building an image: `docker build . -t /image_name/`
 
