@@ -1,13 +1,15 @@
 from typing import List, Optional
-import pydantic
+from uuid import UUID, uuid4
 from decimal import Decimal
+from datetime import date, datetime
 
 from enum import Enum
 from sqlalchemy.orm import backref
 from sqlmodel import Field, Session, SQLModel, create_engine, select, Relationship
 
-from pydantic import conint, conlist
-from datetime import date, datetime
+import pydantic
+from pydantic import conint, conlist, BaseModel
+
 
 class Sex(str, Enum):
     MALE = 'male'
@@ -27,7 +29,23 @@ class User(SQLModel, table=True):
     hashed_password: str
     birthday: date
     sex: Sex = Field(Sex.NOT_KNOWN)
+    createdAt: datetime = Field(default_factory=datetime.now)
+    token: UUID = Field(default_factory=uuid4)
+    disabled: bool = Field(default=False)
+
+
+class UserOut(BaseModel):
+    email: pydantic.EmailStr
+    birthday: date
+    sex: Sex
     createdAt: datetime
+
+
+class UserIn(BaseModel):
+    email: pydantic.EmailStr
+    password: str
+    birthday: date
+    sex: Sex
 
 
 class Company(SQLModel, table=True):

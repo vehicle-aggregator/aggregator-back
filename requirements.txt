@@ -1,4 +1,8 @@
+wheel
 sqlmodel == 0.0.4
 fastapi ~= 0.70
 pydantic[email] ~= 1.8
 mimesis ~= 5.0
+fastapi ~= 0.70
+uvicorn ~= 0.15
+python-multipart == 0.0.5
