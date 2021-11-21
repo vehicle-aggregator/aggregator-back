@@ -23,29 +23,26 @@ class DocumentStatus(str, Enum):
     REJECTED = 'rejected'
 
 
-class User(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+class UserBase(BaseModel):
     email: pydantic.EmailStr
-    hashed_password: str
     birthday: date
     sex: Sex = Field(Sex.NOT_KNOWN)
+
+class User(SQLModel, UserBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    hashed_password: str
     createdAt: datetime = Field(default_factory=datetime.now)
     token: UUID = Field(default_factory=uuid4)
     disabled: bool = Field(default=False)
 
 
-class UserOut(BaseModel):
-    email: pydantic.EmailStr
-    birthday: date
-    sex: Sex
-    createdAt: datetime
+class UserOut(UserBase):
+    ...
 
 
-class UserIn(BaseModel):
-    email: pydantic.EmailStr
+class UserIn(UserBase):
+
     password: str
-    birthday: date
-    sex: Sex
 
 
 class Company(SQLModel, table=True):
@@ -59,21 +56,19 @@ class Company(SQLModel, table=True):
     owner_id: Optional[int] = Field(None, foreign_key="businessuser.id")
 
 
-class CasualUser(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)    
+class Account(BaseModel):
+    id: Optional[int] = Field(default=None, primary_key=True)   
+
+    account_id: Optional[int] = Field(default=None, foreign_key="user.id")
+    # account: User = Relationship(link_model=User)
+    
+
+class CasualUser(Account, SQLModel, table=True):
     balance: Decimal = Field(default=Decimal(0))
 
-    #FK
-    account_id: Optional[int] = Field(default=None, foreign_key="user.id")
-    account: User = Relationship()
 
-
-class BusinessUser(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)    
-
-    #FK
-    account_id: Optional[int] = Field(default=None, foreign_key="user.id")
-    account: User = Relationship()
+class BusinessUser(Account, SQLModel,  table=True):
+    """BusinessUser"""
 
 
 class DocumentType(SQLModel, table=True):
@@ -189,12 +184,8 @@ class Ticket(SQLModel, table=True):
     passenger: Passenger = Relationship()
     
 
-class Moderator(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)    
-
-    #FK
-    account_id: Optional[int] = Field(default=None, foreign_key="user.id")
-    account: User = Relationship()
+class Moderator(Account, SQLModel, table=True):
+    """Moderator"""
 
 
 class CompanyApprovementStatus(str, Enum):
@@ -216,9 +207,10 @@ class CompanyApprovement(SQLModel, table=True):
     approved_by: Moderator = Relationship()
 
 
-engine = create_engine("sqlite:///database.db")
+engine = create_engine("sqlite:///database.db?check_same_thread=False")
 
-SQLModel.metadata.create_all(engine)
+def create_db_and_tables():
+    SQLModel.metadata.create_all(engine)
 
 
 

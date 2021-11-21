@@ -19,3 +19,11 @@ CREATE database.db file (SQLITE)
 `python model-stub.py`
 
 NOW WE HAVE FILE database.db in current directory
+
+RUN API IN DEV MODE:
+
+`uvicorn main:app --reload`
+
+SHOW DOCUMENTIONS
+
+- http://127.0.0.1:8000/auth/docs#/
