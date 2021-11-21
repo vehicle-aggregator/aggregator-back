@@ -56,6 +56,10 @@ class Company(SQLModel, table=True):
     owner_id: Optional[int] = Field(None, foreign_key="businessuser.id")
 
 
+class CompanyWrite(BaseModel):
+    name: str
+
+
 class Account(BaseModel):
     id: Optional[int] = Field(default=None, primary_key=True)   
 
@@ -103,6 +107,11 @@ class Vehicle(SQLModel, table=True):
     company_id: int = Field(foreign_key="company.id")
     company: Company = Relationship()
 
+
+class VehicleWrite(BaseModel):
+
+    vehicle_gos_nomer: str
+    passenger_count: int
 
 class Place(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True) 

@@ -15,7 +15,7 @@ from mimesis.enums import Gender
 
 from model import (BusinessUser, CasualUser, Company, CompanyApprovement, CompanyApprovementStatus, CompanyDocument, DocumentStatus,
                      DocumentType, Moderator, Place, Route, Sex, Ticket, TicketCategory, Trip, TripStatus, User, Vehicle,
-                     VehicleCategory, Passenger)
+                     VehicleCategory, Passenger, engine, create_db_and_tables)
 
 
 fake_person = Person(locale=Locale.RU)
@@ -41,7 +41,7 @@ SQLITE_DB = "database.db"
 
 
 
-engine = create_engine(f'sqlite:///{SQLITE_DB}')
+create_db_and_tables()
 
 
 

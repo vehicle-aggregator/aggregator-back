@@ -27,3 +27,5 @@ RUN API IN DEV MODE:
 SHOW DOCUMENTIONS
 
 - http://127.0.0.1:8000/auth/docs#/
+- http://127.0.0.1:8000/company/docs#/
+- http://127.0.0.1:8000/vehicle/docs#/

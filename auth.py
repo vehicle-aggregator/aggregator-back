@@ -3,6 +3,7 @@ from typing import Literal, Union
 
 from fastapi import FastAPI, Depends, status
 from fastapi.exceptions import HTTPException
+from fastapi.param_functions import Security
 from fastapi.params import Body
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
@@ -15,7 +16,7 @@ from model import Account, BusinessUser, CasualUser, User, UserIn, UserOut, get_
 
 
 app =  FastAPI()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 
 def get_hashed_password(password: str) -> str:
@@ -24,7 +25,7 @@ def get_hashed_password(password: str) -> str:
 
 async def get_current_user(
     session: Session = Depends(get_session),
-    token: str = Depends(oauth2_scheme), 
+    token: str = Security(oauth2_scheme), 
 ) -> User:
 
     statement = select(User).where(User.token == token)
@@ -43,6 +44,18 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
+
+
+async def get_business_user(
+    user: User = Depends(get_current_active_user),
+    session: Session = Depends(get_session)
+):
+    statement = select(BusinessUser).where(BusinessUser.account_id == user.id)
+    try:
+        session.execute(statement).one()
+    except NoResultFound:
+        raise HTTPException(status_code=403, detail="Business Account require")
+    return user
 
 
 @app.post("/token")
